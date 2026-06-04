@@ -8,17 +8,15 @@ spec:
     - list:
         elements:
           - env: dev
-            replicas: "5"
           - env: test
-            replicas: "2"
           - env: prod
-            replicas: "2"
 
   template:
     metadata:
       name: nginx-{{env}}
     spec:
       project: default
+
       source:
         repoURL: https://github.com/neilsh-cerebras/k8s-lab.git
         targetRevision: master
@@ -26,7 +24,7 @@ spec:
 
       destination:
         server: https://kubernetes.default.svc
-        namespace: {{env}}
+        namespace: "{{env}}"
 
       syncPolicy:
         automated:
