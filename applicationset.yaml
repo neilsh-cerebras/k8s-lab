@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: nginx-multi-env
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - env: dev
+            replicas: "5"
+          - env: test
+            replicas: "2"
+          - env: prod
+            replicas: "2"
+
+  template:
+    metadata:
+      name: nginx-{{env}}
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/neilsh-cerebras/k8s-lab.git
+        targetRevision: master
+        path: overlays/{{env}}
+
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: {{env}}
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
